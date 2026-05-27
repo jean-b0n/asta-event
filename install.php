@@ -1,9 +1,9 @@
 <?php
-$host = 'mysql.railway.internal'; // ⚠️ change si tu es en local
-$port = '3306';
-$name = 'railway';
-$user = 'root';
-$pass = 'GzyrBxCJiKgZfcIAJePGBvlwDpOyccEA'; // ⚠️ change ça !
+$host = $_ENV['MYSQLHOST'];
+$port = $_ENV['MYSQLPORT'];
+$name = $_ENV['MYSQLDATABASE'];
+$user = $_ENV['MYSQLUSER'];
+$pass = $_ENV['MYSQLPASSWORD'];
 
 $sql = <<<SQL
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
