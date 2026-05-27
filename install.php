@@ -1,5 +1,5 @@
 <?php
-$host = 'yamanote.proxy.rlwy.net'; // ⚠️ change si tu es en local
+$host = 'mysql.railway.internal'; // ⚠️ change si tu es en local
 $port = '3306';
 $name = 'railway';
 $user = 'root';
@@ -97,28 +97,37 @@ SQL;
 try {
     $dsn = "mysql:host=$host;port=$port;dbname=$name;charset=utf8mb4";
     $pdo = new PDO($dsn, $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::MYSQL_ATTR_MULTI_STATEMENTS => true
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
-    echo '<div class="box"><span class="ok">✅ Connexion MySQL réussie !</span><br>Host: '.$host.' | DB: '.$name.'</div>';
+    echo '<div class="box"><span class="ok">✅ Connexion MySQL réussie !</span></div>';
 
-    // exécution du script SQL complet
-    $pdo->exec($sql);
+    // découpe propre des requêtes
+    $queries = preg_split('/;[\r\n]+/', $sql);
+
+    $i = 1;
 
     echo '<div class="box">';
-    echo '<span class="ok">🎉 Installation terminée !</span><br><br>';
-    echo '🔑 Compte admin : <strong style="color:#d4a017">Enoe_one</strong> / mot de passe : <strong style="color:#d4a017">admin123</strong><br>';
-    echo '<span style="color:#e03030">⚠ Supprime ce fichier (install.php) après installation !</span>';
+    foreach ($queries as $query) {
+        $query = trim($query);
+        if (empty($query)) continue;
+
+        try {
+            $pdo->exec($query);
+            echo "<span class='ok'>✔ Requête $i OK</span><br>";
+        } catch (PDOException $e) {
+            echo "<span class='err'>❌ Erreur requête $i :</span><br>";
+            echo "<pre style='color:#ff8080'>" . htmlspecialchars($query) . "</pre>";
+            echo "<pre style='color:#ffaa00'>" . $e->getMessage() . "</pre>";
+        }
+
+        $i++;
+    }
     echo '</div>';
 
-    echo '<a class="btn" href="/">→ Aller sur le site</a>';
-
 } catch (PDOException $e) {
-    echo '<div class="box"><span class="err">❌ Erreur :</span><br>'.$e->getMessage().'</div>';
-    echo '<p style="color:#f0c040">💡 Vérifie ton host Railway, port et mot de passe.</p>';
+    echo '<div class="box"><span class="err">❌ Erreur de connexion :</span><br>'.$e->getMessage().'</div>';
 }
 ?>
-
 </body>
 </html>
