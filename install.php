@@ -1,5 +1,5 @@
 <?php
-$host = 'mysql.railway.internal'; // ⚠️ change si tu es en local
+$host = 'yamanote.proxy.rlwy.net'; // ⚠️ change si tu es en local
 $port = '3306';
 $name = 'railway';
 $user = 'root';
